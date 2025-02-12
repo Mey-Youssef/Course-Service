@@ -35,15 +35,13 @@ public class CourseService {
         return course;
     }
     public Course addCourseWithTheme(Course course, String themeName, String themeDescription, Integer tutorId) {
-        // 1️⃣ Vérification de l'ID du tuteur
+
         if (tutorId == null) {
             throw new IllegalArgumentException("L'ID du tuteur ne doit pas être nul.");
         }
 
-        // 2️⃣ Affecter l'ID du tuteur au cours
         course.setTutorId(tutorId);
 
-        // 3️⃣ Vérifier si le thème existe déjà, sinon le créer
         Theme theme = themeRepository.findByName(themeName)
                 .orElseGet(() -> {
                     Theme newTheme = new Theme();

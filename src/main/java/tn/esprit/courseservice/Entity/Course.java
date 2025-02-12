@@ -34,6 +34,28 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chapter> chapters = new ArrayList<>();
     private int tutorId;
+    // Ajout des champs pour gérer la notation
+    private int totalRating = 0;  // Somme des notes attribuées
+    private int ratingCount = 0;  // Nombre d'étudiants ayant noté
+    public int calculateAverageRating() {
+        return ratingCount == 0 ? 0 : Math.round((float) totalRating / ratingCount);
+    }
+
+    public int getTotalRating() {
+        return totalRating;
+    }
+
+    public void setTotalRating(int totalRating) {
+        this.totalRating = totalRating;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(int ratingCount) {
+        this.ratingCount = ratingCount;
+    }
 
     public int getId() {
         return Id;
