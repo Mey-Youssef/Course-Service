@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Integer> {
+    List<Course> findByTutorId(int tutorId);
    // List<Course> findByTitleContainingIgnoreCase(String title);
     List<Course> findByRating(int rating);
     @Query("SELECT c FROM Course c WHERE LOWER(c.KeyWords) LIKE LOWER(CONCAT('%', :keyword, '%'))")
