@@ -18,7 +18,10 @@ public class Chapter {
     private String title;
     private String description;
     private boolean Open;
+    private int QuizId;
+    private float Score;
     // each chapter belongs
+
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false)
     private Course course;
@@ -61,6 +64,22 @@ public class Chapter {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public int getQuizId() {
+        return QuizId;
+    }
+
+    public void setQuizId(int quizId) {
+        QuizId = quizId;
+    }
+
+    public float getScore() {
+        return Score;
+    }
+
+    public void setScore(float score) {
+        Score = score;
     }
 }
 

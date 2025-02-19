@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tn.esprit.courseservice.Configuration.AppConfig;
 import tn.esprit.courseservice.Entity.Course;
 import tn.esprit.courseservice.Entity.Theme;
 import tn.esprit.courseservice.Exception.UnauthorizedAccessException;
@@ -22,9 +23,12 @@ public class CourseService {
     CourseRepository courseRepository;
     @Autowired
     ThemeRepository themeRepository;
+    @Autowired
+    AppConfig appConfig;
 
 
-    // Méthode de validation du propriétaire du cours
+// ************************** Methode pour le tuteur ***************************************************//
+
     private Course validateCourseOwnership(int courseId, int tutorId) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new EntityNotFoundException("Cours introuvable avec l'ID : " + courseId));
@@ -34,6 +38,7 @@ public class CourseService {
         }
         return course;
     }
+
     public Course addCourseWithTheme(Course course, String themeName, String themeDescription, Integer tutorId) {
 
         if (tutorId == null) {
@@ -65,6 +70,7 @@ public class CourseService {
         course.setTheme(theme);
         return courseRepository.save(course);
     }
+
     public Course updateCoursePartially(int courseId, Map<String, Object> updates, int tutorId) {
         Course existingCourse = validateCourseOwnership(courseId, tutorId);
 
@@ -106,12 +112,76 @@ public class CourseService {
         }
         return courses;
     }
+
     public void deleteCourse(int courseId, int tutorId) {
         Course course = validateCourseOwnership(courseId, tutorId);
         courseRepository.delete(course);
     }
 
+    //------------------------------------------------------------------------------------------------------------//
+    //***************************   Methode pour admin *********************//
+    // Vérifier que l'ID fourni correspond à l'ID admin configuré
+    private void validateAdmin(int adminId) {
+        if (adminId != appConfig.getAdminId()) {
+            throw new UnauthorizedAccessException("Accès refusé : vous n'êtes pas un administrateur.");
+        }
+    }
 
+    // Permettre à l'admin de consulter la liste de tous les cours
+    public List<Course> getAllCoursesForAdmin(int adminId) {
+        validateAdmin(adminId);
+        return courseRepository.findAll();
+    }
+
+    // Permettre à l'admin de consulter un cours par son ID
+    public Course getCourseByIdForAdmin(int courseId, int adminId) {
+        validateAdmin(adminId);
+        return courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Cours introuvable avec l'ID : " + courseId));
+    }
+
+    // Permettre à l'admin de modifier partiellement un cours
+    public Course updateCourseForAdmin(int courseId, Map<String, Object> updates, int adminId) {
+        validateAdmin(adminId);
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Cours introuvable avec l'ID : " + courseId));
+        updates.forEach((key, value) -> {
+            switch (key) {
+                case "name":
+                    course.setName((String) value);
+                    break;
+                case "description":
+                    course.setDescription((String) value);
+                    break;
+                case "image":
+                    course.setImage((String) value);
+                    break;
+                case "difficulty":
+                    course.setDifficulty((String) value);
+                    break;
+                case "prerequisite":
+                    course.setPrerequisite((String) value);
+                    break;
+                case "keyWords":
+                    course.setKeyWords((String) value);
+                    break;
+                case "nbChapters":
+                    course.setNbChapters((Integer) value);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Champ non reconnu : " + key);
+            }
+        });
+        return courseRepository.save(course);
+    }
+
+    // Permettre à l'admin de supprimer un cours
+    public void deleteCourseForAdmin(int courseId, int adminId) {
+        validateAdmin(adminId);
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Cours introuvable avec l'ID : " + courseId));
+        courseRepository.delete(course);
+    }
 
 
 }

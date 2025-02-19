@@ -37,7 +37,7 @@ public class CourseController {
         public ResponseEntity<Course> assignCourseToTheme(
                 @PathVariable int courseId,
                 @RequestParam int themeId,
-               @RequestParam int tutorId) {
+               @RequestParam int tutorId) { 
             try {
                Course updatedCourse = courseService.assignCourseToTheme(courseId, themeId, tutorId);
                 return ResponseEntity.ok(updatedCourse);

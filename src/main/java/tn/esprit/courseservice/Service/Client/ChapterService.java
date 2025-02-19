@@ -87,6 +87,28 @@ public class ChapterService {
 
         return chapterRepository.findByCourseId(courseId);
     }
+    //un chapitre est marquée terminer si l'etudiant passe le quiz du chapitre avec un score bien determine
+    // un score >60% ouvre le chapitre suivant
+    // le progress de l'etudiant est determiner de la facon suivante , le nbre de quiz = nbre de chapitres qi l'etudiant passse par exemple 5 quiz et que le cours comporte 10 chapitres c'est a dire que il y a passe 50% du cours
+    public boolean markChapterAsCompleted(int chapterId, int studentId, float studentScore) {
+        Chapter chapter = chapterRepository.findById(chapterId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Chapitre introuvable"));
 
+        if (studentScore >= 60.0) {
+            chapter.setOpen(true);
+            chapterRepository.save(chapter);
+            return true;
+        }
+        return false;
+    }
+    public double calculateStudentProgress(int courseId, int studentId, int quizzesPassed) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cours introuvable"));
+
+        int totalChapters = course.getNbChapters();
+        if (totalChapters == 0) return 0.0;
+
+        return (double) quizzesPassed / totalChapters * 100;
+    }
 
 }

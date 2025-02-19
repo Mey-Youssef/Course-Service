@@ -35,7 +35,11 @@ public class Course {
     private List<Chapter> chapters = new ArrayList<>();
     private int tutorId;
     // Ajout des champs pour gérer la notation
-    private int totalRating = 0;  // Somme des notes attribuées
+
+    @Column(nullable = false)
+    private int totalRating = 0;
+
+    @Column(nullable = false)// Somme des notes attribuées
     private int ratingCount = 0;  // Nombre d'étudiants ayant noté
     public int calculateAverageRating() {
         return ratingCount == 0 ? 0 : Math.round((float) totalRating / ratingCount);
