@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +17,19 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+
+@Document(indexName = "courses")
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int Id;
+    @Field(type = FieldType.Text)
     private String name;
+    @Field(type = FieldType.Text)
     private String description;
     private  int rating;
     private String image;
+    @Field(type = FieldType.Keyword)
     private String difficulty;
     private String prerequisite;
     private String KeyWords;
