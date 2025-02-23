@@ -29,10 +29,10 @@ public class Course {
     private String description;
     private  int rating;
     private String image;
-    @Field(type = FieldType.Keyword)
+
     private String difficulty;
     private String prerequisite;
-    private String KeyWords;
+    private String keyWords;
     private int nbChapters;
     // a course belongs to one and only one theme
     @ManyToOne
@@ -126,11 +126,11 @@ public class Course {
     }
 
     public String getKeyWords() {
-        return KeyWords;
+        return keyWords;
     }
 
     public void setKeyWords(String keyWords) {
-        KeyWords = keyWords;
+        this.keyWords = keyWords;
     }
 
     public Theme getTheme() {
